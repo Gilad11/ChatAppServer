@@ -24,12 +24,8 @@ namespace ChatAppServer.Migrations
 
             modelBuilder.Entity("ChatAppServer.Models.GroupChat", b =>
                 {
-                    b.Property<Guid>("GroupId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("GroupCreator")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("GroupId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("GroupName")
                         .IsRequired()
@@ -42,30 +38,25 @@ namespace ChatAppServer.Migrations
 
             modelBuilder.Entity("ChatAppServer.Models.Message", b =>
                 {
-                    b.Property<Guid>("MessageId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("MessageId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("GroupChatGroupId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("GroupChatGroupId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<Guid?>("GroupId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("GroupId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsRead")
-                        .HasColumnType("bit");
+                    b.Property<string>("SenderId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<Guid?>("RecipientId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SenderId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("SendingTime")
+                    b.Property<DateTime>("SentAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("MessageId");
@@ -77,41 +68,15 @@ namespace ChatAppServer.Migrations
                     b.ToTable("Messages");
                 });
 
-            modelBuilder.Entity("ChatAppServer.Models.Notification", b =>
-                {
-                    b.Property<Guid>("NotificationId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsRead")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid?>("MessageId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("RecipientId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("SendingTime")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("NotificationId");
-
-                    b.HasIndex("RecipientId");
-
-                    b.ToTable("Notifications");
-                });
-
             modelBuilder.Entity("ChatAppServer.Models.User", b =>
                 {
-                    b.Property<Guid>("UserId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Username")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("LastActiveDate")
+                    b.Property<DateTime>("LastActiveDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Password")
@@ -121,27 +86,23 @@ namespace ChatAppServer.Migrations
                     b.Property<string>("ProfilePicture")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("isActive")
                         .HasColumnType("bit");
 
-                    b.HasKey("UserId");
+                    b.HasKey("Username");
 
                     b.ToTable("Users");
                 });
 
             modelBuilder.Entity("GroupChatUser", b =>
                 {
-                    b.Property<Guid>("GroupUsersUserId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("GroupUsersUsername")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<Guid>("GroupsListGroupId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("GroupsListGroupId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("GroupUsersUserId", "GroupsListGroupId");
+                    b.HasKey("GroupUsersUsername", "GroupsListGroupId");
 
                     b.HasIndex("GroupsListGroupId");
 
@@ -155,7 +116,7 @@ namespace ChatAppServer.Migrations
                         .HasForeignKey("GroupChatGroupId");
 
                     b.HasOne("ChatAppServer.Models.User", "Sender")
-                        .WithMany("MessagesSent")
+                        .WithMany()
                         .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -165,22 +126,11 @@ namespace ChatAppServer.Migrations
                     b.Navigation("Sender");
                 });
 
-            modelBuilder.Entity("ChatAppServer.Models.Notification", b =>
-                {
-                    b.HasOne("ChatAppServer.Models.User", "Recipient")
-                        .WithMany()
-                        .HasForeignKey("RecipientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Recipient");
-                });
-
             modelBuilder.Entity("GroupChatUser", b =>
                 {
                     b.HasOne("ChatAppServer.Models.User", null)
                         .WithMany()
-                        .HasForeignKey("GroupUsersUserId")
+                        .HasForeignKey("GroupUsersUsername")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -194,11 +144,6 @@ namespace ChatAppServer.Migrations
             modelBuilder.Entity("ChatAppServer.Models.GroupChat", b =>
                 {
                     b.Navigation("GroupMessages");
-                });
-
-            modelBuilder.Entity("ChatAppServer.Models.User", b =>
-                {
-                    b.Navigation("MessagesSent");
                 });
 #pragma warning restore 612, 618
         }

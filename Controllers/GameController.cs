@@ -1,12 +1,21 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using ChatAppServer.Data;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChatAppServer.Controllers
 {
+   
+
     [Route("api/[controller]")]
     [ApiController]
     public class GameController : ControllerBase
     {
+        private ChatDbContext context { get; set; }
+        public GameController(ChatDbContext _context)
+        {
+            context = _context;
+        }
+
         // GET: api/game
         [HttpGet]
         public IActionResult GetGameState()

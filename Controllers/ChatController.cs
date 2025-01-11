@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using ChatAppServer.Data;
+using ChatAppServer.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ChatAppServer.Controllers
 {
@@ -7,19 +10,35 @@ namespace ChatAppServer.Controllers
     [ApiController]
     public class ChatController : ControllerBase
     {
-        // GET: api/chat
-        [HttpGet]
-        public IActionResult GetMessages()
+        private ChatDbContext context { get; set; }
+        public ChatController(ChatDbContext _context)
         {
-            return Ok(new { Message = "Hello from ChatController" });
+            context = _context;
         }
 
-        // POST: api/chat
-        [HttpPost]
-        public IActionResult SendMessage([FromBody] string message)
+        // GET: api/chat/{mainUser}/{groupId}
+        [HttpGet("{mainUserId}/{groupId}")]
+        public IActionResult GetChatMessages(string mainUser, string groupId)
         {
-            // Process the message
-            return Ok(new { Success = true, SentMessage = message });
+            var conversation = context.GetChatMessagesById(mainUser, groupId);
+            if (conversation == null)
+            {
+                return NoContent();
+            }
+            return Ok(conversation);
         }
+
+        // POST: api/chat/{mainUserId}/{groupId}/{content}
+        [HttpPost("{mainUserId}/{groupId}/{content}")]
+        public IActionResult AddMessage(string mainUser, string groupId, string content)
+        {
+            context.AddMessage(mainUser, groupId, content);
+            return NoContent();
+        }
+        
+
+
+
+
     }
 }

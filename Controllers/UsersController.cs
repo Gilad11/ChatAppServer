@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using ChatAppServer.Data;
+using ChatAppServer.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ChatAppServer.Controllers
 {
@@ -7,38 +9,49 @@ namespace ChatAppServer.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
+        private ChatDbContext context { get; set; }
+        public UsersController(ChatDbContext _context)
+        {
+            context = _context;
+        }
+
         // GET: api/users
         [HttpGet]
         public IActionResult GetAllUsers()
         {
-            // Example: Return a list of users
-            var users = new[]
-            {
-                new { Id = 1, Name = "Alice" },
-                new { Id = 2, Name = "Bob" }
-            };
-
+            var users = context.GetAllUsers();
             return Ok(users);
         }
 
-        // GET: api/users/{id}
-        [HttpGet("{id}")]
-        public IActionResult GetUserById(int id)
+        // GET: api/users/{username}
+        [HttpGet("{username}")]
+        public IActionResult GetUserByUsername(string username)
         {
-            // Example: Return a single user
-            var user = new { Id = id, Name = $"User{id}" };
-
+            var user = context.GetUserByUsername(username);
             return Ok(user);
         }
 
-        // POST: api/users
         [HttpPost]
-        public IActionResult CreateUser([FromBody] string userName)
+        public IActionResult AddUser(User user)
         {
-            // Example: Simulate user creation
-            var createdUser = new { Id = 3, Name = userName };
-
-            return CreatedAtAction(nameof(GetUserById), new { id = createdUser.Id }, createdUser);
+            context.AddUser(user);
+            return NoContent();
         }
+
+        [HttpPost]
+        public IActionResult EditUser(string username, User user)
+        {
+            context.EditUser(username, user);
+
+            return NoContent();
+        }
+
+        [HttpPost]
+        public IActionResult DeleteUser(string username)
+        {
+            context.DeleteUser(username);
+            return NoContent();
+        }
+
     }
 }

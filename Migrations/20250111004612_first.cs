@@ -15,9 +15,8 @@ namespace ChatAppServer.Migrations
                 name: "GroupsChat",
                 columns: table => new
                 {
-                    GroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    GroupName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    GroupCreator = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    GroupId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    GroupName = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -28,29 +27,28 @@ namespace ChatAppServer.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProfilePicture = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastActiveDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastActiveDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     isActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.UserId);
+                    table.PrimaryKey("PK_Users", x => x.Username);
                 });
 
             migrationBuilder.CreateTable(
                 name: "GroupChatUser",
                 columns: table => new
                 {
-                    GroupUsersUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    GroupsListGroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    GroupUsersUsername = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    GroupsListGroupId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GroupChatUser", x => new { x.GroupUsersUserId, x.GroupsListGroupId });
+                    table.PrimaryKey("PK_GroupChatUser", x => new { x.GroupUsersUsername, x.GroupsListGroupId });
                     table.ForeignKey(
                         name: "FK_GroupChatUser_GroupsChat_GroupsListGroupId",
                         column: x => x.GroupsListGroupId,
@@ -58,10 +56,10 @@ namespace ChatAppServer.Migrations
                         principalColumn: "GroupId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_GroupChatUser_Users_GroupUsersUserId",
-                        column: x => x.GroupUsersUserId,
+                        name: "FK_GroupChatUser_Users_GroupUsersUsername",
+                        column: x => x.GroupUsersUsername,
                         principalTable: "Users",
-                        principalColumn: "UserId",
+                        principalColumn: "Username",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -69,14 +67,12 @@ namespace ChatAppServer.Migrations
                 name: "Messages",
                 columns: table => new
                 {
-                    MessageId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SenderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    GroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    RecipientId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    MessageId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    SenderId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    GroupId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SendingTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsRead = table.Column<bool>(type: "bit", nullable: false),
-                    GroupChatGroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    SentAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    GroupChatGroupId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -90,28 +86,7 @@ namespace ChatAppServer.Migrations
                         name: "FK_Messages_Users_SenderId",
                         column: x => x.SenderId,
                         principalTable: "Users",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Notifications",
-                columns: table => new
-                {
-                    NotificationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    RecipientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    MessageId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    SendingTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsRead = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Notifications", x => x.NotificationId);
-                    table.ForeignKey(
-                        name: "FK_Notifications_Users_RecipientId",
-                        column: x => x.RecipientId,
-                        principalTable: "Users",
-                        principalColumn: "UserId",
+                        principalColumn: "Username",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -129,11 +104,6 @@ namespace ChatAppServer.Migrations
                 name: "IX_Messages_SenderId",
                 table: "Messages",
                 column: "SenderId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Notifications_RecipientId",
-                table: "Notifications",
-                column: "RecipientId");
         }
 
         /// <inheritdoc />
@@ -144,9 +114,6 @@ namespace ChatAppServer.Migrations
 
             migrationBuilder.DropTable(
                 name: "Messages");
-
-            migrationBuilder.DropTable(
-                name: "Notifications");
 
             migrationBuilder.DropTable(
                 name: "GroupsChat");

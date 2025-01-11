@@ -5,17 +5,16 @@ namespace ChatAppServer.Models
 {
     public class Message
     {
-        public Guid MessageId { get; set; }
-        public Guid SenderId { get; set; } // Reference to User
-        public Guid? GroupId { get; set; } // Optional for group messages
-        public Guid? RecipientId { get; set; } // Optional for direct messages
+        [Key]
+        public string MessageId { get; set; } = Guid.NewGuid().ToString();
+        public string SenderId { get; set; } = ""; // Reference to User
+        public string GroupId { get; set; } = "";
         public string Content { get; set; } = "";
-        public DateTime SendingTime { get; set; } = DateTime.UtcNow;
-        public bool IsRead { get; set; } = false;
+        public DateTime SentAt { get; set; } = DateTime.UtcNow;
 
         // Relationships
-        public User Sender { get; set; } = null!;
-        public GroupChat? GroupChat { get; set; }
+        public User Sender { get; set; } = null!; //NTC
+        public GroupChat? GroupChat { get; set; } //NTC
     }
 
 }

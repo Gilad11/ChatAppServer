@@ -31,14 +31,21 @@ namespace ChatAppServer.Controllers
             return Ok(user);
         }
 
-        [HttpPost]
+        [HttpGet("{username}/groupschat")]
+        public IActionResult GetUserGroupsChat(string username)
+        {
+            var groupChats = context.GetUserGroupsChat(username);
+            return Ok(groupChats);
+        }
+
+        [HttpPost("{user}")]
         public IActionResult AddUser(User user)
         {
             context.AddUser(user);
             return NoContent();
         }
 
-        [HttpPost]
+        [HttpPost("{username}/{user}")]
         public IActionResult EditUser(string username, User user)
         {
             context.EditUser(username, user);
@@ -46,7 +53,7 @@ namespace ChatAppServer.Controllers
             return NoContent();
         }
 
-        [HttpPost]
+        [HttpDelete("{username}")]
         public IActionResult DeleteUser(string username)
         {
             context.DeleteUser(username);

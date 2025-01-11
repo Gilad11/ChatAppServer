@@ -1,4 +1,5 @@
 ﻿using ChatAppServer.Data;
+using ChatAppServer.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
@@ -7,11 +8,11 @@ namespace ChatAppServer.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GroupChatController : ControllerBase
+    public class GroupsChatController : ControllerBase
     {
 
         private ChatDbContext context { get; set; }
-        public GroupChatController(ChatDbContext _context)
+        public GroupsChatController(ChatDbContext _context)
         {
             context = _context;
         }
@@ -20,6 +21,10 @@ namespace ChatAppServer.Controllers
         public IActionResult GetAllGroupsChat()
         {
             var groupsChat = context.GetAllGroupsChat();
+            if (groupsChat == null)
+            {
+                return Ok("No groups chat for this user!");
+            }
             return Ok(groupsChat);
         }
 
@@ -30,14 +35,14 @@ namespace ChatAppServer.Controllers
             return Ok(groupChat);
         }
 
-        [HttpPost("{groupName}")]
-        public IActionResult AddGroupChat(string groupName)
+        [HttpPost("{groupChat}")]
+        public IActionResult AddGroupChat(GroupChat groupChat)
         {
-            context.AddGroupChat(groupName);
+            context.AddGroupChat(groupChat);
             return NoContent();
         }
 
-        [HttpPost("{groupId}")]
+        [HttpDelete("{groupId}")]
         public IActionResult DeleteGroupChat(string groupId)
         {
             context.DeleteGroupChat(groupId);

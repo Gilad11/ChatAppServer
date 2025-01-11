@@ -112,6 +112,14 @@ namespace ChatAppServer.Data
             return Users.FirstOrDefault(u => u.Username == username);
         }
 
+        public List<GroupChat> GetUserGroupsChat(string username)
+        {
+            var user = GetUserByUsername(username);
+            var groupsChat = user.GroupsList.ToList();
+            if (groupsChat == null) groupsChat = new List<GroupChat>();
+            return groupsChat;
+        }
+
         public IEnumerable<User> GetAllUsers()
         {
             return Users.ToList();
@@ -154,15 +162,9 @@ namespace ChatAppServer.Data
             return chatMessages;
         }
 
-        public void AddMessage(string mainUserId, string groupId, string content)
+        public void AddMessage(Message message)
         {
-            var massage = new Message
-            {
-                SenderId = mainUserId,
-                GroupId = groupId,
-                Content = content
-            };
-            Messages.Add(massage);
+            Messages.Add(message);
             SaveChanges();
         }
 
@@ -177,12 +179,8 @@ namespace ChatAppServer.Data
             return GroupsChat.FirstOrDefault(m => m.GroupId == groupId);
         }
 
-        public void AddGroupChat(string groupName)
+        public void AddGroupChat(GroupChat groupChat)
         {
-            var groupChat = new GroupChat
-            {
-                GroupName = groupName
-            };
             if (groupChat.GroupName != "")
             {
                 GroupsChat.Add(groupChat);

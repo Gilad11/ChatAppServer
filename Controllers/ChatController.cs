@@ -29,10 +29,10 @@ namespace ChatAppServer.Controllers
         }
 
         // POST: api/chat/{mainUserId}/{groupId}/{content}
-        [HttpPost("{mainUserId}/{groupId}/{content}")]
-        public IActionResult AddMessage(string mainUser, string groupId, string content)
+        [HttpPost("{message}")]
+        public IActionResult AddMessage(Message message)
         {
-            context.AddMessage(mainUser, groupId, content);
+            context.AddMessage(message);
             return NoContent();
         }
         

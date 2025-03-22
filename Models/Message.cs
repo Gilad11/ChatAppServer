@@ -1,20 +1,23 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Text.RegularExpressions;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ChatAppServer.Models
 {
     public class Message
     {
         [Key]
-        public string MessageId { get; set; } = Guid.NewGuid().ToString();
-        public string SenderId { get; set; } = ""; // Reference to User
-        public string GroupId { get; set; } = "";
-        public string Content { get; set; } = "";
+        public string Id { get; set; } = Guid.NewGuid().ToString();
+
+        [Required]
+        public string Content { get; set; } = string.Empty;
+
         public DateTime SentAt { get; set; } = DateTime.UtcNow;
+        public bool IsRead { get; set; }
 
-        // Relationships
-        public User Sender { get; set; } = null!; //NTC
-        public GroupChat? GroupChat { get; set; } //NTC
+        [Required]
+        public string SenderId { get; set; }
+
+        [Required]
+        public string ReceiverId { get; set; }
     }
-
 }

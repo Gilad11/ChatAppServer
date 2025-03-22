@@ -9,8 +9,8 @@ namespace ChatAppServer.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private ChatDbContext context { get; set; }
-        public UsersController(ChatDbContext _context)
+        private ChatAppDbContext context { get; set; }
+        public UsersController(ChatAppDbContext _context)
         {
             context = _context;
         }
@@ -23,40 +23,25 @@ namespace ChatAppServer.Controllers
             return Ok(users);
         }
 
-        // GET: api/users/{username}
-        [HttpGet("{username}")]
-        public IActionResult GetUserByUsername(string username)
+        [HttpGet("{id}")]
+        public IActionResult GetUserById(string id)
         {
-            var user = context.GetUserByUsername(username);
+            var user = context.GetUserById(id);
             return Ok(user);
         }
 
-        [HttpGet("{username}/groupschat")]
-        public IActionResult GetUserGroupsChat(string username)
+        [HttpPost("{id}/{user}")]
+        public IActionResult EditUser(string id, [FromBody] User user) //mybe need to fix
         {
-            var groupChats = context.GetUserGroupsChat(username);
-            return Ok(groupChats);
-        }
-
-        [HttpPost("{user}")]
-        public IActionResult AddUser(User user)
-        {
-            context.AddUser(user);
-            return NoContent();
-        }
-
-        [HttpPost("{username}/{user}")]
-        public IActionResult EditUser(string username, User user)
-        {
-            context.EditUser(username, user);
+            context.EditUser(id, user);
 
             return NoContent();
         }
 
-        [HttpDelete("{username}")]
-        public IActionResult DeleteUser(string username)
+        [HttpDelete("{id}")]
+        public IActionResult DeleteUser(string id)
         {
-            context.DeleteUser(username);
+            context.DeleteUser(id);
             return NoContent();
         }
 

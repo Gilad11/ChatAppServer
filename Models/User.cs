@@ -4,16 +4,14 @@ namespace ChatAppServer.Models
 {
     public class User
     {
-        [Key]
-        public string Username { get; set; } = "";
-        public string? Email { get; set; }
+        [Required]
+        [MaxLength(100)]
+        public string Id { get; set; } = string.Empty;
         public string Password { get; set; } = "0000";
-        public string? ProfilePicture { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string? Email { get; set; }
+        public string ProfilePicture { get; set; } = string.Empty;
         public DateTime LastActiveDate { get; set; } = DateTime.UtcNow;
-        public bool isActive { get; set; } = false;
-
-        // Relationships
-        public List<GroupChat> GroupsList { get; set; } = new List<GroupChat>();
+        public bool IsActive { get; set; }
     }
-
 }

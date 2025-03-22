@@ -46,7 +46,7 @@ namespace ChatAppServer.Controllers
          }*/
 
 
-       /* [HttpGet("getgame/{u1}/{u2}")]
+        [HttpGet("getgame/{u1}/{u2}")]
         public async Task<IActionResult> GetGame(string u1, string u2)
         {
             string gameId = _context.FindGameId(u1, u2);
@@ -54,7 +54,7 @@ namespace ChatAppServer.Controllers
             var game = _context.IsExistGame(gameId, u1, u2);
             return Ok(game);
         }
-       */
+       
         /* [HttpPost("makemove/{u1}{u2}")]
          public async Task<IActionResult> MakeMove(string u1, string u2, [FromBody] Move move)
          {

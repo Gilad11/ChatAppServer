@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using ChatAppServer.Data;
+using ChatAppServer.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ChatAppServer.Controllers
 {
@@ -7,38 +9,41 @@ namespace ChatAppServer.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
+        private ChatAppDbContext context { get; set; }
+        public UsersController(ChatAppDbContext _context)
+        {
+            context = _context;
+        }
+
         // GET: api/users
         [HttpGet]
         public IActionResult GetAllUsers()
         {
-            // Example: Return a list of users
-            var users = new[]
-            {
-                new { Id = 1, Name = "Alice" },
-                new { Id = 2, Name = "Bob" }
-            };
-
+            var users = context.GetAllUsers();
             return Ok(users);
         }
 
-        // GET: api/users/{id}
         [HttpGet("{id}")]
-        public IActionResult GetUserById(int id)
+        public IActionResult GetUserById(string id)
         {
-            // Example: Return a single user
-            var user = new { Id = id, Name = $"User{id}" };
-
+            var user = context.GetUserById(id);
             return Ok(user);
         }
 
-        // POST: api/users
-        [HttpPost]
-        public IActionResult CreateUser([FromBody] string userName)
+        [HttpPost("{id}/{user}")]
+        public IActionResult EditUser(string id, [FromBody] User user) //mybe need to fix
         {
-            // Example: Simulate user creation
-            var createdUser = new { Id = 3, Name = userName };
+            context.EditUser(id, user);
 
-            return CreatedAtAction(nameof(GetUserById), new { id = createdUser.Id }, createdUser);
+            return NoContent();
         }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteUser(string id)
+        {
+            context.DeleteUser(id);
+            return NoContent();
+        }
+
     }
 }

@@ -2,16 +2,11 @@
 
 namespace ChatAppServer.Models
 {
-    /*
-     * 1,2,3
-     * 4,5,6
-     * 7,8,9
-     */
-    public class Board
+    public class Game
     {
-        [Key]
+        //1 = mouse, 2 = cat, 3 = dog
         public int Id { get; set; }
-        public int cell1 { get; set; } = 0;
+        public int cell1 { get; set; } = 0; // -3 -> 3
         public int cell2 { get; set; } = 0;
         public int cell3 { get; set; } = 0;
         public int cell4 { get; set; } = 0;
@@ -20,5 +15,11 @@ namespace ChatAppServer.Models
         public int cell7 { get; set; } = 0;
         public int cell8 { get; set; } = 0;
         public int cell9 { get; set; } = 0;
+
+        [Required]
+        public string SenderId { get; set; }
+
+        [Required]
+        public string ReceiverId { get; set; }
     }
 }

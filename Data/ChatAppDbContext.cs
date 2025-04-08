@@ -1,5 +1,6 @@
 ﻿using ChatAppServer.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace ChatAppServer.Data
 {
@@ -31,21 +32,27 @@ namespace ChatAppServer.Data
             return gameId;
         }
 
-        public Game? IsExistGame(string gameId, string p1, string p2)
+        public Game? GetGame(string senderId, string receiverId)
         {
-            var game = Games.FirstOrDefault(g => g.Id == gameId);
-            if (game == null)
-            {
-                Games.Add(new Game(gameId, p1, p2));
-                SaveChanges();
+            return Games.FirstOrDefault(g =>
+                (g.SenderId == senderId && g.ReceiverId == receiverId) ||
+                (g.SenderId == receiverId && g.ReceiverId == senderId));
+        }
+
+        public void SaveGame(Game newGame, int gameId)
+        {
+            Game game = Games.FirstOrDefault(g => g.Id == gameId);
+            if (game != null) {
+                Games.Remove(game);
+                Games.Add(newGame);
             }
-            return game;
+            else
+            {
+                Games.Add(newGame);
+            }
+            SaveChanges();
         }
 
-        public void MakeMove(Move move, string p1, string p2)
-        {
-
-        }
         public List<User> GetAllUsers()
         {
             var users = Users.ToList();
@@ -139,15 +146,23 @@ namespace ChatAppServer.Data
 
             modelBuilder.Entity<Message>().HasData(messages);
 
-            var boards = new[] {
-                new Board { Id = 1},
-                new Board { Id = 2},
-            };
-            modelBuilder.Entity<Board>().HasData(boards);
-
             var games = new[]
             {
-                new Game("aaabbb", "aaa", "bbb") { GameBoardId = 1 } // ✅ Use existing Board ID
+                new Game
+                {
+                    Id = 1,
+                    SenderId = "aaa",
+                    ReceiverId = "bbb",
+                    cell1 = 0,
+                    cell2 = 0,
+                    cell3 = 0,
+                    cell4 = 0,
+                    cell5 = 0,
+                    cell6 = 0,
+                    cell7 = 0,
+                    cell8 = 0,
+                    cell9 = 0
+                }
             };
             modelBuilder.Entity<Game>().HasData(games);
         }

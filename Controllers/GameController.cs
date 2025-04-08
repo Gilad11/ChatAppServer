@@ -21,45 +21,19 @@ namespace ChatAppServer.Controllers
             _chatHub = chatHub;
         }
 
-        /*  [HttpPost("reset/{gameId}")]
-          public async Task<IActionResult> ResetGame(string gameId)
-          {
-              var movesToDelete = _context.Moves.Where(m => m.GameId == gameId);
-              _context.Moves.RemoveRange(movesToDelete);
-              await _context.SaveChangesAsync();
-              return Ok($"Game {gameId} reset successfully.");
-          }*/
-
-
-
-
-        /* [HttpGet("moves/{gameId}")]
-         public async Task<IActionResult> GetMoves(string gameId)
-         {
-             var moves = await _context.Moves
-                 .Where(m => m.GameId == gameId)
-                 .OrderBy(m => m.X)
-                 .ThenBy(m => m.Y)
-                 .ToListAsync();
-
-             return Ok(moves);
-         }*/
-
-
-        [HttpGet("getgame/{u1}/{u2}")]
-        public async Task<IActionResult> GetGame(string u1, string u2)
+        [HttpGet("getgame/{senderId}/{receiverId}")]
+        public async Task<IActionResult> GetGame(string senderId, string receiverId)
         {
-            string gameId = _context.FindGameId(u1, u2);
-            if (gameId == "0") return BadRequest("non unique username");
-            var game = _context.IsExistGame(gameId, u1, u2);
+            var game = _context.GetGame(senderId, receiverId);
+            if (game is null) return BadRequest();
             return Ok(game);
         }
-       
-        /* [HttpPost("makemove/{u1}{u2}")]
-         public async Task<IActionResult> MakeMove(string u1, string u2, [FromBody] Move move)
-         {
 
-             _context.MakeMove()
-         }*/
+        [HttpPost("savegame/{gameId}")]
+        public async Task<IActionResult> SaveGame([FromBody] Game newGame, int gameId)
+        {
+            _context.SaveGame(newGame, gameId);
+            return Ok();
+        }
     }
 }

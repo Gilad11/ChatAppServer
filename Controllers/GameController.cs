@@ -25,14 +25,21 @@ namespace ChatAppServer.Controllers
         public async Task<IActionResult> GetGame(string senderId, string receiverId)
         {
             var game = _context.GetGame(senderId, receiverId);
-            if (game is null) return BadRequest();
             return Ok(game);
         }
 
-        [HttpPost("savegame/{gameId}")]
-        public async Task<IActionResult> SaveGame([FromBody] Game newGame, int gameId)
+        [HttpGet("getgames/{userId}")]
+        public async Task<IActionResult> GetGames(string userId)
         {
-            _context.SaveGame(newGame, gameId);
+            var game = _context.GetGames(userId);
+            return Ok(game);
+        }
+
+        [HttpPost("savegame")]
+        public async Task<IActionResult> SaveGame([FromBody] Game newGame)
+        {
+            _context.SaveGame(newGame);
+            await _chatHub.SendGame(newGame);
             return Ok();
         }
     }

@@ -21,5 +21,8 @@ namespace ChatAppServer.Models
 
         [Required]
         public string ReceiverId { get; set; }
+        [Required]
+        public string RedId { get; set; }
+
     }
 }

@@ -1,10 +1,21 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using ChatAppServer.Data;
+using ChatAppServer.Models;
+using Microsoft.AspNetCore.SignalR;
 using System.Collections.Concurrent;
+using System.Linq;
+using System.Threading.Tasks;
 
 public class ChatHub : Hub
 {
     private static readonly ConcurrentDictionary<string, string> _userConnections = new();
     private static readonly ConcurrentDictionary<string, (string PlayerX, string PlayerO, string[] Board, string CurrentPlayer)> _games = new();
+
+    //private readonly ChatAppDbContext _context;
+
+    //public ChatHub(ChatAppDbContext context)
+    //{
+    //    _context = context;
+    //}
 
     public override async Task OnConnectedAsync()
     {
@@ -67,5 +78,22 @@ public class ChatHub : Hub
         var game = _games[gameId];
         _games[gameId] = (game.PlayerX, game.PlayerO, new string[9], "X");
         await Clients.Group(gameId).SendAsync("UpdateGame", new { Board = new string[9], CurrentPlayer = "X" });
+    }
+
+    public async Task SendGame(Game gameData)
+    {
+        if (gameData == null)
+        {
+            return;
+        }
+
+        // Save or update the game in the database.
+        //_context.SaveGame(gameData, gameData.Id);
+
+        // Check if the opponent is connected, and if so, notify using their connection id.
+        if (_userConnections.TryGetValue(gameData.ReceiverId, out var receiverConnectionId))
+        {
+            await Clients.Client(receiverConnectionId).SendAsync("ReceiveGame", gameData);
+        }
     }
 }

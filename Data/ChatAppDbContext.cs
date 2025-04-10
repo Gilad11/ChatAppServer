@@ -39,9 +39,16 @@ namespace ChatAppServer.Data
                 (g.SenderId == receiverId && g.ReceiverId == senderId));
         }
 
-        public void SaveGame(Game newGame, int gameId)
+        public List<Game> GetGames(string userId)
         {
-            Game game = Games.FirstOrDefault(g => g.Id == gameId);
+            return Games
+                    .Where(g => g.SenderId == userId || g.ReceiverId == userId)
+                    .ToList();
+        }
+
+        public void SaveGame(Game newGame)
+        {
+            Game game = Games.FirstOrDefault(g => (g.SenderId == newGame.SenderId && g.ReceiverId == newGame.ReceiverId) || g.ReceiverId == newGame.SenderId && g.SenderId == newGame.ReceiverId);
             if (game != null) {
                 Games.Remove(game);
                 Games.Add(newGame);
@@ -146,25 +153,25 @@ namespace ChatAppServer.Data
 
             modelBuilder.Entity<Message>().HasData(messages);
 
-            var games = new[]
-            {
-                new Game
-                {
-                    Id = 1,
-                    SenderId = "aaa",
-                    ReceiverId = "bbb",
-                    cell1 = 0,
-                    cell2 = 0,
-                    cell3 = 0,
-                    cell4 = 0,
-                    cell5 = 0,
-                    cell6 = 0,
-                    cell7 = 0,
-                    cell8 = 0,
-                    cell9 = 0
-                }
-            };
-            modelBuilder.Entity<Game>().HasData(games);
+            //var games = new[]
+            //{
+            //    new Game
+            //    {
+            //        Id = 1,
+            //        SenderId = "aaa",
+            //        ReceiverId = "bbb",
+            //        cell1 = 0,
+            //        cell2 = 0,
+            //        cell3 = 0,
+            //        cell4 = 0,
+            //        cell5 = 0,
+            //        cell6 = 0,
+            //        cell7 = 0,
+            //        cell8 = 0,
+            //        cell9 = 0
+            //    }
+            //};
+            //modelBuilder.Entity<Game>().HasData(games);
         }
     }
 }
